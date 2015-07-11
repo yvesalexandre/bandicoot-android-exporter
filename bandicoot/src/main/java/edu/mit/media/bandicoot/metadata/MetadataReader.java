@@ -4,13 +4,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by BS on 7/10/2015.
+ * Used to read interaction metadata from call logs and SMS
+ *
+ * @author Brian Sweatt
  */
 public class MetadataReader {
     private Cursor callLogCursor;
@@ -23,25 +26,42 @@ public class MetadataReader {
         createCursorsIfNecessary();
     }
 
-    public List<MetadataEntry> getAllInteractions() {
+    public List<MetadataEntry> getAllInteractions(ProgressBar progressBar) {
         List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
 
         createCursorsIfNecessary();
 
+        if (progressBar != null) {
+            progressBar.setMax((getCallLogCount() + getSmsCount()) * 2);
+        }
+
+        int i = 0;
         while (callLogCursor.moveToNext()) {
             entries.add(new CallLogEntry(callLogCursor));
+            i++;
+            if (progressBar != null && i % 10 == 0) {
+                progressBar.setProgress(i);
+            }
         }
 
         callLogCursor.close();
 
         while (smsCursor.moveToNext()) {
             entries.add(new SmsEntry(smsCursor));
+            i++;
+            if (progressBar != null && i % 10 == 0) {
+                progressBar.setProgress(i);
+            }
         }
 
         smsCursor.close();
 
         Collections.sort(entries);
         return entries;
+    }
+
+    private void updateProgress(ProgressBar progressBar, int progress) {
+
     }
 
     private void createCursorsIfNecessary() {

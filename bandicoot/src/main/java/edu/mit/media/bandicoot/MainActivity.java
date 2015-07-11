@@ -5,10 +5,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -24,7 +23,11 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         Button readLogsButton = (Button) findViewById(R.id.read_logs_button);
-        final TextView mainTextView = (TextView) findViewById(R.id.main_text_view);
+        final TextView totalTextView = (TextView) findViewById(R.id.total_text_view);
+        final TextView callTextView = (TextView) findViewById(R.id.call_text_view);
+        final TextView smsTextView = (TextView) findViewById(R.id.sms_text_view);
+        final TextView fileSizeTextView = (TextView) findViewById(R.id.filesize_text_view);
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         final Intent shareFileIntent = new Intent(Intent.ACTION_SEND);
         shareFileIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -45,20 +48,31 @@ public class MainActivity extends ActionBarActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                mainTextView.setText(String.format("Calls: %d\nTexts: %d", callCount, smsCount));
+                totalTextView.setText(String.format("Total interactions: %d", callCount + smsCount));
+                callTextView.setText(String.format("Calls: %d", callCount));
+                smsTextView.setText(String.format("Texts: %d", smsCount));
+                LogReaderTask logReaderTask = new LogReaderTask(MainActivity.this, reader) {
+                    @Override
+                    protected void onPostExecute(File file) {
+                        super.onPostExecute(file);
+                        fileSizeTextView.setText(String.format("File size: %s", humanReadableByteCount(file.length(), true)));
+                    }
+                };
+
+                logReaderTask.execute();
             }
         };
         showCountsTask.execute();
 
-        final FileProvider provider = new FileProvider();
-
         readLogsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogReaderTask logReaderTask = new LogReaderTask(MainActivity.this, reader) {
+                progressBar.setVisibility(View.VISIBLE);
+                LogReaderTask logReaderTask = new LogReaderTask(MainActivity.this, reader, progressBar) {
                     @Override
                     protected void onPostExecute(File csvFile) {
                         super.onPostExecute(csvFile);
+                        progressBar.setVisibility(View.GONE);
                         shareFileIntent.putExtra(Intent.EXTRA_SUBJECT, "Bandicoot interactions file");
                         shareFileIntent.putExtra(Intent.EXTRA_TEXT, "Attached.");
                         shareFileIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(MainActivity.this, "edu.mit.media.bandicoot.fileprovider", csvFile));
@@ -72,25 +86,11 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }

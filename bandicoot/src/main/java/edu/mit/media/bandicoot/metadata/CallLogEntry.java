@@ -4,9 +4,12 @@ import android.database.Cursor;
 import android.provider.CallLog;
 
 /**
- * Created by BS on 7/9/2015.
+ * Represents metadata from a phone call interaction.
+ *
+ * @author Brian Sweatt
  */
 public class CallLogEntry extends MetadataEntry {
+
     public CallLogEntry(Cursor callLogRow) {
         this.interaction = "call";
         this.dateTime = callLogRow.getLong(callLogRow.getColumnIndex(CallLog.Calls.DATE));

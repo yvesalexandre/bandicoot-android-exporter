@@ -4,7 +4,9 @@ import android.database.Cursor;
 import android.provider.Telephony;
 
 /**
- * Created by BS on 7/10/2015.
+ * Represents metadata from a text message interaction.
+ *
+ * @author Brian Sweatt
  */
 public class SmsEntry extends MetadataEntry {
     public SmsEntry(Cursor smsRow) {

@@ -4,18 +4,23 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 /**
- * Created by BS on 7/9/2015.
+ * Base class for interaction metadata. Only intended to be used when writing out to a CSV file.
+ *
+ * @author Brian Sweatt
  */
 public class MetadataEntry implements Comparable<MetadataEntry> {
-    public long dateTime;
-    public String interaction;
-    public String direction;
-    public String correspondentId;
-    public long callDuration;
-    public String antennaId;
+    protected long dateTime;
+    protected String interaction;
+    protected String direction;
+    protected String correspondentId;
+    protected long callDuration;
+    protected String antennaId;
 
     @Override
     public String toString() {
@@ -43,6 +48,16 @@ public class MetadataEntry implements Comparable<MetadataEntry> {
             correspondentId = util.format(number, PhoneNumberUtil.PhoneNumberFormat.E164);
         } else {
             correspondentId = phoneNumber;
+        }
+
+        try {
+            // Hex encoded SHA-1 of the phone number, rather than the actual number
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+            sha1.update(correspondentId.getBytes());
+            BigInteger digestInt = new BigInteger(1,sha1.digest());
+            correspondentId = digestInt.toString(16);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
     }
 
