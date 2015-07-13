@@ -9,8 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import edu.mit.media.bandicoot.metadata.MetadataEntry;
-import edu.mit.media.bandicoot.metadata.MetadataReader;
+import edu.mit.media.bandicoot.metadata.Interaction;
+import edu.mit.media.bandicoot.metadata.InteractionReader;
 
 /**
  * Asynchronous task for reading logs and writing the output to a CSV.
@@ -22,15 +22,15 @@ import edu.mit.media.bandicoot.metadata.MetadataReader;
  */
 public class LogReaderTask extends AsyncTask<Void, Void, File> {
 
-    private MetadataReader reader;
+    private InteractionReader reader;
     private Context context;
     private ProgressBar progressBar;
 
-    public LogReaderTask(Context context, MetadataReader reader) {
+    public LogReaderTask(Context context, InteractionReader reader) {
         this(context, reader, null);
     }
 
-    public LogReaderTask(Context context, MetadataReader reader, ProgressBar progressBar) {
+    public LogReaderTask(Context context, InteractionReader reader, ProgressBar progressBar) {
         // Creating the cursors here, so that we can get the counts from them prior to reading
         this.context = context;
         this.reader = reader;
@@ -40,11 +40,11 @@ public class LogReaderTask extends AsyncTask<Void, Void, File> {
     @Override
     protected File doInBackground(Void... nothing) {
 
-        List<MetadataEntry> entries = reader.getAllInteractions(progressBar);
+        List<Interaction> entries = reader.getAllInteractions(progressBar);
 
         try {
             FileOutputStream os = context.openFileOutput("interactions.csv", Context.MODE_PRIVATE);
-            for (MetadataEntry entry : entries) {
+            for (Interaction entry : entries) {
                 os.write((entry.toString() + "\n").getBytes());
             }
             if (progressBar != null) {

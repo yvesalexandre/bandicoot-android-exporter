@@ -9,14 +9,14 @@
                 tools:context=".MainActivity">
 
     <TextView
-        android:text=""
+        android:text="@string/total_interactions"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/total_text_view"/>
 
     <TextView
-        android:text=""
+        android:text="@string/calls"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
         android:layout_alignParentStart="true"/>
 
     <TextView
-        android:text=""
+        android:text="@string/texts"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         android:layout_alignParentStart="true"/>
 
     <TextView
-        android:text=""
+        android:text="@string/file_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,6 +60,16 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:visibility="gone" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hash_phone_numbers"
+        android:id="@+id/hash_numbers_checkbox"
+        android:layout_below="@+id/filesize_text_view"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:checked="true"/>
 
 
 </RelativeLayout>

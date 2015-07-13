@@ -8,15 +8,15 @@ import android.provider.Telephony;
  *
  * @author Brian Sweatt
  */
-public class SmsEntry extends MetadataEntry {
-    public SmsEntry(Cursor smsRow) {
+class TextInteraction extends Interaction {
+    protected TextInteraction(Cursor smsRow, boolean hashNumber) {
         this.interaction = "text";
         int type = smsRow.getInt(smsRow.getColumnIndex(Telephony.Sms.TYPE));
         // NOTE: we're only handling successfully sent and received messages, not transient states
         // This should be included as a filter on the query
         this.direction = (type == Telephony.Sms.MESSAGE_TYPE_SENT)? "out":"in";
         this.dateTime = smsRow.getLong(smsRow.getColumnIndex(Telephony.Sms.DATE));
-        setCorrespondentId(smsRow.getString(smsRow.getColumnIndex(Telephony.Sms.ADDRESS)));
+        setCorrespondentId(smsRow.getString(smsRow.getColumnIndex(Telephony.Sms.ADDRESS)), hashNumber);
 
     }
 }

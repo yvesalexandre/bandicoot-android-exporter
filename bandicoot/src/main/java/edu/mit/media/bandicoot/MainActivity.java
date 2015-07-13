@@ -7,12 +7,13 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
 
-import edu.mit.media.bandicoot.metadata.MetadataReader;
+import edu.mit.media.bandicoot.metadata.InteractionReader;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -28,11 +29,12 @@ public class MainActivity extends ActionBarActivity {
         final TextView smsTextView = (TextView) findViewById(R.id.sms_text_view);
         final TextView fileSizeTextView = (TextView) findViewById(R.id.filesize_text_view);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final CheckBox hashNumbersCheckbox = (CheckBox) findViewById(R.id.hash_numbers_checkbox);
 
         final Intent shareFileIntent = new Intent(Intent.ACTION_SEND);
         shareFileIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        final MetadataReader reader = new MetadataReader(this);
+        final InteractionReader reader = new InteractionReader(this, hashNumbersCheckbox.isChecked());
 
         // Wrapping this in a task as it could take a while for the count query to return
         AsyncTask<Void, Void, Void> showCountsTask = new AsyncTask<Void, Void, Void>() {
@@ -48,14 +50,14 @@ public class MainActivity extends ActionBarActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                totalTextView.setText(String.format("Total interactions: %d", callCount + smsCount));
-                callTextView.setText(String.format("Calls: %d", callCount));
-                smsTextView.setText(String.format("Texts: %d", smsCount));
+                totalTextView.setText(String.format("%s %d", getString(R.string.total_interactions), callCount + smsCount));
+                callTextView.setText(String.format("%s %d", getString(R.string.calls), callCount));
+                smsTextView.setText(String.format("%s %d", getString(R.string.texts), smsCount));
                 LogReaderTask logReaderTask = new LogReaderTask(MainActivity.this, reader) {
                     @Override
                     protected void onPostExecute(File file) {
                         super.onPostExecute(file);
-                        fileSizeTextView.setText(String.format("File size: %s", humanReadableByteCount(file.length(), true)));
+                        fileSizeTextView.setText(String.format("%s %s", getString(R.string.file_size), humanReadableByteCount(file.length(), true)));
                     }
                 };
 
@@ -68,6 +70,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
+                reader.setHashNumbers(hashNumbersCheckbox.isChecked());
                 LogReaderTask logReaderTask = new LogReaderTask(MainActivity.this, reader, progressBar) {
                     @Override
                     protected void onPostExecute(File csvFile) {

@@ -8,9 +8,9 @@ import android.provider.CallLog;
  *
  * @author Brian Sweatt
  */
-public class CallLogEntry extends MetadataEntry {
+class CallInteraction extends Interaction {
 
-    public CallLogEntry(Cursor callLogRow) {
+    protected CallInteraction(Cursor callLogRow, boolean hashNumber) {
         this.interaction = "call";
         this.dateTime = callLogRow.getLong(callLogRow.getColumnIndex(CallLog.Calls.DATE));
         this.callDuration = callLogRow.getLong(callLogRow.getColumnIndex(CallLog.Calls.DURATION));
@@ -18,6 +18,6 @@ public class CallLogEntry extends MetadataEntry {
         // NOTE: doesn't differentiate between incoming calls that were missed or picked up
         // Does bandicoot care? Is a duration of zero enough?
         this.direction = (callType == CallLog.Calls.OUTGOING_TYPE)? "out":"in";
-        setCorrespondentId(callLogRow.getString(callLogRow.getColumnIndex(CallLog.Calls.NUMBER)));
+        setCorrespondentId(callLogRow.getString(callLogRow.getColumnIndex(CallLog.Calls.NUMBER)), hashNumber);
     }
 }

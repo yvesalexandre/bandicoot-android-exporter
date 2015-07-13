@@ -14,7 +14,7 @@ import java.util.Date;
  *
  * @author Brian Sweatt
  */
-public class MetadataEntry implements Comparable<MetadataEntry> {
+public class Interaction implements Comparable<Interaction> {
     protected long dateTime;
     protected String interaction;
     protected String direction;
@@ -33,7 +33,7 @@ public class MetadataEntry implements Comparable<MetadataEntry> {
             (callDuration > 0)? callDuration : "");
     }
 
-    protected void setCorrespondentId(String phoneNumber) {
+    protected void setCorrespondentId(String phoneNumber, boolean hashNumber) {
         PhoneNumberUtil util = PhoneNumberUtil.getInstance();
 
         Phonenumber.PhoneNumber number = null;
@@ -50,14 +50,16 @@ public class MetadataEntry implements Comparable<MetadataEntry> {
             correspondentId = phoneNumber;
         }
 
-        try {
-            // Hex encoded SHA-1 of the phone number, rather than the actual number
-            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-            sha1.update(correspondentId.getBytes());
-            BigInteger digestInt = new BigInteger(1,sha1.digest());
-            correspondentId = digestInt.toString(16);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        if (hashNumber) {
+            try {
+                // Hex encoded SHA-1 of the phone number, rather than the actual number
+                MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+                sha1.update(correspondentId.getBytes());
+                BigInteger digestInt = new BigInteger(1, sha1.digest());
+                correspondentId = digestInt.toString(16);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -67,7 +69,7 @@ public class MetadataEntry implements Comparable<MetadataEntry> {
     }
 
     @Override
-    public int compareTo(MetadataEntry another) {
+    public int compareTo(Interaction another) {
         return Long.signum(dateTime - another.dateTime);
     }
 }

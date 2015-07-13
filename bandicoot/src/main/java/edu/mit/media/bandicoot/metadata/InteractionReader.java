@@ -15,19 +15,21 @@ import java.util.List;
  *
  * @author Brian Sweatt
  */
-public class MetadataReader {
+public class InteractionReader {
     private Cursor callLogCursor;
     private Cursor smsCursor;
     private Context context;
+    private InteractionFactory interactionFactory;
 
-    public MetadataReader(Context context) {
+    public InteractionReader(Context context, boolean hashNumbers) {
         // Creating the cursors here, so that we can get the counts from them prior to reading
         this.context = context;
+        this.interactionFactory = new InteractionFactory(hashNumbers);
         createCursorsIfNecessary();
     }
 
-    public List<MetadataEntry> getAllInteractions(ProgressBar progressBar) {
-        List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
+    public List<Interaction> getAllInteractions(ProgressBar progressBar) {
+        List<Interaction> entries = new ArrayList<Interaction>();
 
         createCursorsIfNecessary();
 
@@ -37,7 +39,7 @@ public class MetadataReader {
 
         int i = 0;
         while (callLogCursor.moveToNext()) {
-            entries.add(new CallLogEntry(callLogCursor));
+            entries.add(interactionFactory.getCallInteraction(callLogCursor));
             i++;
             if (progressBar != null && i % 10 == 0) {
                 progressBar.setProgress(i);
@@ -47,7 +49,7 @@ public class MetadataReader {
         callLogCursor.close();
 
         while (smsCursor.moveToNext()) {
-            entries.add(new SmsEntry(smsCursor));
+            entries.add(interactionFactory.getTextInteraction(smsCursor));
             i++;
             if (progressBar != null && i % 10 == 0) {
                 progressBar.setProgress(i);
@@ -58,10 +60,6 @@ public class MetadataReader {
 
         Collections.sort(entries);
         return entries;
-    }
-
-    private void updateProgress(ProgressBar progressBar, int progress) {
-
     }
 
     private void createCursorsIfNecessary() {
@@ -93,5 +91,9 @@ public class MetadataReader {
 
     public int getSmsCount() {
         return smsCursor.getCount();
+    }
+
+    public void setHashNumbers(boolean hashNumbers) {
+        this.interactionFactory.setHashNumbers(hashNumbers);
     }
 }
