@@ -25,8 +25,8 @@ public class MainActivity extends ActionBarActivity {
 
         Button readLogsButton = (Button) findViewById(R.id.read_logs_button);
         final TextView totalTextView = (TextView) findViewById(R.id.total_text_view);
-        final TextView callTextView = (TextView) findViewById(R.id.call_text_view);
-        final TextView smsTextView = (TextView) findViewById(R.id.sms_text_view);
+        //final TextView callTextView = (TextView) findViewById(R.id.call_text_view);
+        //final TextView smsTextView = (TextView) findViewById(R.id.sms_text_view);
         final TextView fileSizeTextView = (TextView) findViewById(R.id.filesize_text_view);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final CheckBox hashNumbersCheckbox = (CheckBox) findViewById(R.id.hash_numbers_checkbox);
@@ -50,14 +50,14 @@ public class MainActivity extends ActionBarActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                totalTextView.setText(String.format("%s %d", getString(R.string.total_interactions), callCount + smsCount));
-                callTextView.setText(String.format("%s %d", getString(R.string.calls), callCount));
-                smsTextView.setText(String.format("%s %d", getString(R.string.texts), smsCount));
+                totalTextView.setText(String.format(getString(R.string.total_interactions), callCount, smsCount));
+                //callTextView.setText(String.format("%s %d", getString(R.string.calls), callCount));
+                //smsTextView.setText(String.format("%s %d", getString(R.string.texts), smsCount));
                 LogReaderTask logReaderTask = new LogReaderTask(MainActivity.this, reader) {
                     @Override
                     protected void onPostExecute(File file) {
                         super.onPostExecute(file);
-                        fileSizeTextView.setText(String.format("%s %s", getString(R.string.file_size), humanReadableByteCount(file.length(), true)));
+                        fileSizeTextView.setText(humanReadableByteCount(file.length(), true));
                     }
                 };
 

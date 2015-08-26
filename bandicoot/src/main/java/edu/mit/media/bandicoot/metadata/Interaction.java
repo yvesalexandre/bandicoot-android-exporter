@@ -7,6 +7,7 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -65,7 +66,8 @@ public class Interaction implements Comparable<Interaction> {
 
     protected String getDateString() {
         Date date = new Date(dateTime);
-        return date.toString();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-d HH:mm:ss");
+        return dateFormat.format(date);
     }
 
     @Override
