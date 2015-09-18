@@ -2,6 +2,8 @@ package edu.mit.media.bandicoot;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.ProgressBar;
 
 import java.io.File;
@@ -32,7 +34,7 @@ public class LogReaderTask extends AsyncTask<Void, Void, File> {
 
     public LogReaderTask(Context context, InteractionReader reader, ProgressBar progressBar) {
         // Creating the cursors here, so that we can get the counts from them prior to reading
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.reader = reader;
         this.progressBar = progressBar;
     }
@@ -43,18 +45,25 @@ public class LogReaderTask extends AsyncTask<Void, Void, File> {
         List<Interaction> entries = reader.getAllInteractions(progressBar);
 
         try {
-            FileOutputStream os = context.openFileOutput("interactions.csv", Context.MODE_PRIVATE);
+            FileOutputStream os = context.openFileOutput("metadata.csv", Context.MODE_PRIVATE);
+            os.write("interaction,direction,correspondent_id,datetime,call_duration,antenna_id\n".getBytes());
             for (Interaction entry : entries) {
                 os.write((entry.toString() + "\n").getBytes());
             }
             if (progressBar != null) {
-                progressBar.setProgress(progressBar.getMax());
+                // A Handler ensures that the progressBar methods run on the UI thread...
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setProgress(progressBar.getMax());
+                    }
+                });
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return context.getFileStreamPath("interactions.csv");
+        return context.getFileStreamPath("metadata.csv");
     }
 
     @Override

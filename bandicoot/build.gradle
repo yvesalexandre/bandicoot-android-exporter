@@ -20,7 +20,7 @@ android {
         applicationId "edu.mit.media.bandicoot"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 1
+        versionCode 3
         versionName "1.0"
     }
     buildTypes {

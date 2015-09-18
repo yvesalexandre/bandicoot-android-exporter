@@ -9,4 +9,5 @@
     <string name="file_size">File size</string>
     <string name="hash_phone_numbers">Encrypt the phone numbers</string>
     <string name="instructions">Export your metadata over email and upload them at <i>bandicoot.mit.edu/try</i> to visualize them.</string>
+    <string name="email_body">Attached is a csv file containing all of your metadata. It can be opened in any spreadsheet application, including excel.</string>
 </resources>

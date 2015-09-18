@@ -76,11 +76,11 @@ public class MainActivity extends ActionBarActivity {
                     protected void onPostExecute(File csvFile) {
                         super.onPostExecute(csvFile);
                         progressBar.setVisibility(View.GONE);
-                        shareFileIntent.putExtra(Intent.EXTRA_SUBJECT, "Bandicoot interactions file");
-                        shareFileIntent.putExtra(Intent.EXTRA_TEXT, "Attached.");
+                        shareFileIntent.putExtra(Intent.EXTRA_SUBJECT, "Bandicoot metadata file");
+                        shareFileIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_body));
                         shareFileIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(MainActivity.this, "edu.mit.media.bandicoot.fileprovider", csvFile));
                         shareFileIntent.setType("text/csv");
-                        Intent shareChooserIntent = Intent.createChooser(shareFileIntent, "Send interactions csv");
+                        Intent shareChooserIntent = Intent.createChooser(shareFileIntent, "Send metadata csv");
                         MainActivity.this.startActivityForResult(shareChooserIntent, 1234);
                     }
                 };

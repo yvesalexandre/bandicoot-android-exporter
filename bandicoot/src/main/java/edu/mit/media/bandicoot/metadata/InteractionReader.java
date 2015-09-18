@@ -38,8 +38,13 @@ public class InteractionReader {
         }
 
         int i = 0;
+        long earliestCall = Long.MAX_VALUE;
         while (callLogCursor.moveToNext()) {
-            entries.add(interactionFactory.getCallInteraction(callLogCursor));
+            Interaction interaction = interactionFactory.getCallInteraction(callLogCursor);
+            if (interaction.dateTime < earliestCall) {
+                earliestCall = interaction.dateTime;
+            }
+            entries.add(interaction);
             i++;
             if (progressBar != null && i % 10 == 0) {
                 progressBar.setProgress(i);
@@ -49,7 +54,13 @@ public class InteractionReader {
         callLogCursor.close();
 
         while (smsCursor.moveToNext()) {
-            entries.add(interactionFactory.getTextInteraction(smsCursor));
+            Interaction interaction = interactionFactory.getTextInteraction(smsCursor);
+            // As of writing, Android only keeps the 500 most recent calls.
+            // For the sake of accurate analysis, we're filtering out SMS that occur before the
+            // earliest phone call. This should maybe be configurable in the app.
+            if (earliestCall == Long.MAX_VALUE || interaction.dateTime >= earliestCall) {
+                entries.add(interaction);
+            }
             i++;
             if (progressBar != null && i % 10 == 0) {
                 progressBar.setProgress(i);
