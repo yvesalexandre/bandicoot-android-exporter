@@ -44,10 +44,13 @@ public class Interaction implements Comparable<Interaction> {
             e.printStackTrace();
         }
 
-
         if (number != null) {
             correspondentId = util.format(number, PhoneNumberUtil.PhoneNumberFormat.E164);
-        } else {
+        }
+
+        // If the correspondentId hasn't been set yet, or the formatting above was unsuccessful,
+        // set it to the phoneNumber passed in
+        if (correspondentId == null) {
             correspondentId = phoneNumber;
         }
 
