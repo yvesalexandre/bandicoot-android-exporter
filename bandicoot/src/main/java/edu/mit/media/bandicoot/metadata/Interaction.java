@@ -1,5 +1,7 @@
 package edu.mit.media.bandicoot.metadata;
 
+import android.util.Log;
+
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -19,7 +21,7 @@ public class Interaction implements Comparable<Interaction> {
     protected long dateTime;
     protected String interaction;
     protected String direction;
-    protected String correspondentId;
+    private String correspondentId;
     protected long callDuration;
     protected String antennaId;
 
@@ -29,9 +31,13 @@ public class Interaction implements Comparable<Interaction> {
             "%s,%s,%s,%s,%s,",
             interaction,
             direction,
-            correspondentId,
+            getCorrespondentId(),
             getDateString(),
             (callDuration > 0)? callDuration : "");
+    }
+
+    protected String getCorrespondentId() {
+        return (correspondentId == null)? "" : correspondentId;
     }
 
     protected void setCorrespondentId(String phoneNumber, boolean hashNumber) {
@@ -54,7 +60,8 @@ public class Interaction implements Comparable<Interaction> {
             correspondentId = phoneNumber;
         }
 
-        if (hashNumber) {
+        // It's hard to believe, but the correspondentId can still be null at this point.
+        if (hashNumber && correspondentId != null) {
             try {
                 // Hex encoded SHA-1 of the phone number, rather than the actual number
                 MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
@@ -62,7 +69,7 @@ public class Interaction implements Comparable<Interaction> {
                 BigInteger digestInt = new BigInteger(1, sha1.digest());
                 correspondentId = digestInt.toString(16);
             } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
+                Log.e(getClass().getSimpleName(), "Error getting algorithm for phone number hash");
             }
         }
     }

@@ -11,6 +11,7 @@
 
     <TextView
         android:text="@string/total_interactions"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/total_text_view"/>
@@ -36,45 +37,49 @@
         android:layout_alignParentStart="true"/>
 -->
     <TextView
+        android:id="@+id/instructions_text_view"
         android:text="@string/instructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/instructions_text_view"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_marginTop="30dp"
         android:layout_below="@+id/total_text_view"/>
 
     <TextView
+        android:id="@+id/filesize_label_text_view"
         android:text="@string/file_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/filesize_label_text_view"
         android:layout_marginTop="30dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_below="@+id/instructions_text_view"/>
 
     <TextView
+        android:id="@+id/filesize_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/filesize_text_view"
-        android:layout_below="@+id/filesize_label_text_view"/>
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/filesize_label_text_view"
+        android:layout_alignBaseline="@id/filesize_label_text_view"/>
 
     <CheckBox
+        android:id="@+id/hash_numbers_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hash_phone_numbers"
-        android:id="@+id/hash_numbers_checkbox"
-        android:layout_below="@+id/filesize_text_view"
-        android:layout_marginTop="50dp"
         android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:checked="true"/>
+        android:textSize="16sp"
+        android:layout_above="@+id/read_logs_button"
+        android:checked="true" />
 
     <Button
+        android:id="@+id/read_logs_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Export to CSV"
-        android:id="@+id/read_logs_button"
-        android:layout_below="@id/hash_numbers_checkbox"
         android:textColor="@android:color/black"
+        android:layout_alignParentBottom="true"
         android:singleLine="true"
         android:textSize="16sp"/>
 
@@ -85,6 +90,4 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:visibility="gone" />
-
-
 </RelativeLayout>
